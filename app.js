@@ -4,6 +4,7 @@ const state = {
   company: null,
   tab: 'xamkorlar',
   query: '',
+  homeTab: 'buyurtmachilar',
   history: [],
   heTab: 'yolxarita',
   infoTab: 'yol_xarita',
@@ -11,6 +12,14 @@ const state = {
 
 const MAP_W = 3085;
 const MAP_H = 824;
+
+const buyurtmachilar = [
+  { id: 'b1', stir: '200144930', name: '"O‘zbekiston texnologik metallar kombinati" AJ' },
+  { id: 'b2', stir: '200144930', name: 'Geoburmash MCHJ' },
+  { id: 'b3', stir: '200144930', name: '"Grant metal stroy" MCHJ' },
+  { id: 'b4', stir: '200144930', name: '"Metal mahsulot zavodi" MCHJ' },
+  { id: 'b5', stir: '200144930', name: '"AUTO PAD SYSTEMS" MCHJ' },
+];
 
 // ─── HE Ministry content ──────────────────────────────────
 const heContent = {
@@ -348,7 +357,7 @@ function buildMap() {
 function push() {
   state.history.push({
     view: state.view, company: state.company,
-    tab: state.tab, query: state.query, heTab: state.heTab,
+    tab: state.tab, query: state.query, homeTab: state.homeTab, heTab: state.heTab,
   });
 }
 function setState(patch) { Object.assign(state, patch); render(); }
@@ -497,25 +506,45 @@ function render() {
 }
 
 function renderHome() {
+  document.querySelectorAll('.home-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.hometab === state.homeTab);
+  });
+
   const q = state.query.toLowerCase();
-  const list = q
-    ? companies.filter(c =>
-        normalizeCompanyName(c.name).toLowerCase().includes(q) ||
-        c.stir.includes(q) ||
-        (c.viloyat && c.viloyat.toLowerCase().includes(q)) ||
-        (c.sector && c.sector.toLowerCase().includes(q))
-      )
-    : companies;
-  list.sort((a, b) => normalizeCompanyName(a.name).localeCompare(normalizeCompanyName(b.name), 'uz'));
+  let list = [];
+  if (state.homeTab === 'korxonalar') {
+    list = q
+      ? companies.filter(c =>
+          normalizeCompanyName(c.name).toLowerCase().includes(q) ||
+          c.stir.includes(q) ||
+          (c.viloyat && c.viloyat.toLowerCase().includes(q)) ||
+          (c.sector && c.sector.toLowerCase().includes(q))
+        )
+      : [...companies];
+    list.sort((a, b) => normalizeCompanyName(a.name).localeCompare(normalizeCompanyName(b.name), 'uz'));
+  } else {
+    list = q
+      ? buyurtmachilar.filter(x =>
+          normalizeCompanyName(x.name).toLowerCase().includes(q) || x.stir.includes(q)
+        )
+      : buyurtmachilar;
+  }
 
   const el = document.getElementById('home-list');
   el.innerHTML = list.length
-    ? list.map(companyCardHTML).join('')
-    : '<p class="empty-state">Korxona topilmadi</p>';
+    ? (state.homeTab === 'korxonalar'
+      ? list.map(companyCardHTML).join('')
+      : list.map(x => `<div class="company-card company-card-static">
+          <p class="cc-name">${normalizeCompanyName(x.name)}</p>
+          <div class="cc-pills">${pill('STIR: ' + x.stir)}</div>
+        </div>`).join(''))
+    : '<p class="empty-state">Ma\'lumot topilmadi</p>';
 
-  el.querySelectorAll('.company-card').forEach(card => {
-    card.addEventListener('click', () => { push(); selectCompany(+card.dataset.id); });
-  });
+  if (state.homeTab === 'korxonalar') {
+    el.querySelectorAll('.company-card').forEach(card => {
+      card.addEventListener('click', () => { push(); selectCompany(+card.dataset.id); });
+    });
+  }
 
   syncScrollIndicator(el);
 }
@@ -828,7 +857,7 @@ document.getElementById('btn-home').addEventListener('click', () => {
   state.history = [];
   document.getElementById('search-input').value = '';
   updateSearchClear();
-  setState({ view: 'home', company: null, tab: 'xamkorlar', query: '' });
+  setState({ view: 'home', company: null, tab: 'xamkorlar', query: '', homeTab: 'buyurtmachilar' });
 });
 
 document.getElementById('btn-back').addEventListener('click', () => {
@@ -841,7 +870,7 @@ document.getElementById('btn-back').addEventListener('click', () => {
     state.history = [];
     document.getElementById('search-input').value = '';
     updateSearchClear();
-    setState({ view: 'home', company: null, tab: 'xamkorlar', query: '' });
+    setState({ view: 'home', company: null, tab: 'xamkorlar', query: '', homeTab: 'buyurtmachilar' });
   }
 });
 
@@ -875,6 +904,16 @@ document.getElementById('search-clear').addEventListener('click', () => {
 document.getElementById('panel-tabs').addEventListener('click', e => {
   const btn = e.target.closest('.tab-btn');
   if (btn && state.company) setState({ tab: btn.dataset.tab });
+});
+
+document.getElementById('home-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.home-tab-btn');
+  if (btn) setState({ homeTab: btn.dataset.hometab, query: '' });
+  const input = document.getElementById('search-input');
+  if (input) {
+    input.value = '';
+    updateSearchClear();
+  }
 });
 
 document.getElementById('he-tabs').addEventListener('click', e => {

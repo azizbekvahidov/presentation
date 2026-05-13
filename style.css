@@ -507,6 +507,55 @@ html, body {
   letter-spacing: -0.3px;
   margin-bottom: 24px;
 }
+.home-tab-bar {
+  position: relative;
+  display: flex;
+  margin-bottom: 22px;
+}
+.home-tab-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(52, 52, 64, 0.18);
+}
+.home-tab-btn {
+  position: relative;
+  width: 50%;
+  border: none;
+  background: transparent;
+  color: rgba(52, 52, 64, 0.55);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0 0 14px;
+  cursor: pointer;
+}
+.home-tab-btn.active { color: #21212c; }
+.home-tab-btn.active::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: var(--blue);
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 2px;
+  z-index: 2;
+}
+.home-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--blue);
+  z-index: 3;
+}
 .search-wrap {
   display: flex;
   align-items: center;
@@ -557,6 +606,7 @@ html, body {
   transition: background 0.1s;
   flex-shrink: 0;
 }
+.company-card.company-card-static { cursor: default; }
 .company-card:hover { background: rgba(255,255,255,1); }
 
 .cc-name {
