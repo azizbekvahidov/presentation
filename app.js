@@ -14,41 +14,32 @@ const state = {
 
 const MAP_W = 3085;
 const MAP_H = 824;
-const buyerProducts = [
-  'Transformator',
-  'Isitish qozoni',
-  '"Gold Avex" ta 1 da devorga o‘rnatilgan elektr mini-isitgich',
-  'O‘chirgish bloki',
-  'Isitish qozoni',
-  'Transformator',
-  '"Gold Avex" ta 1 da devorga o‘rnatilgan elektr mini-isitgich',
-  'O‘chirgish bloki',
-  'Transformator',
-  '"Gold Avex" ta 1 da devorga o‘rnatilgan elektr mini-isitgich',
-  'O‘chirgish bloki',
-  'Transformator',
-];
+function mapCustomersToBuyurtmachilar(src) {
+  if (!Array.isArray(src)) return [];
+  return src.map((customer, idx) => ({
+    id: String(customer.id ?? `b${idx + 1}`),
+    name: customer.name || 'Nomaʼlum buyurtmachi',
+    stir: String(customer.inn || ''),
+    ifut: customer.ifut ? String(customer.ifut) : '',
+    sector: customer.sector || '',
+    address: customer.address || '',
+    suppliers: Array.isArray(customer.suppliers)
+      ? customer.suppliers.map((supplier, sIdx) => ({
+          id: String(supplier.id ?? `${customer.id ?? idx + 1}-s${sIdx + 1}`),
+          name: supplier.name || 'Nomaʼlum yetkazib beruvchi',
+          stir: String(supplier.inn || ''),
+          address: supplier.address || '',
+          products: Array.isArray(supplier.products) && supplier.products.length
+            ? supplier.products
+            : [],
+        }))
+      : [],
+  }));
+}
 
-const buyurtmachilar = [
-  {
-    id: 'b1',
-    stir: '200144930',
-    ifut: '35140',
-    sector: 'Elektr energiya',
-    name: '"O‘zbekiston texnologik metallar kombinati" AJ',
-    suppliers: [
-      { id: 's1', name: 'Navoiy KMK', products: buyerProducts },
-      { id: 's2', name: 'Geoburmash MCHJ', products: buyerProducts },
-      { id: 's3', name: '"Grant metal stroy" MCHJ', products: buyerProducts },
-      { id: 's4', name: '"Metal mahsulot zavodi" MCHJ', products: buyerProducts },
-      { id: 's5', name: '"AUTO PAD SYSTEMS" MCHJ', products: buyerProducts },
-    ],
-  },
-  { id: 'b2', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: 'Geoburmash MCHJ', suppliers: [] },
-  { id: 'b3', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: '"Grant metal stroy" MCHJ', suppliers: [] },
-  { id: 'b4', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: '"Metal mahsulot zavodi" MCHJ', suppliers: [] },
-  { id: 'b5', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: '"AUTO PAD SYSTEMS" MCHJ', suppliers: [] },
-];
+const buyurtmachilar = mapCustomersToBuyurtmachilar(
+  typeof customers !== 'undefined' ? customers : []
+);
 
 // ─── HE Ministry content ──────────────────────────────────
 const heContent = {
@@ -431,6 +422,28 @@ function getProposals(c) {
   if (!orgStirs.size) return [];
   return companies.filter(x => x.id !== c.id && (x.supplies_to || []).some(o => orgStirs.has(o)));
 }
+function getBuyerSupplierCompanyIds(buyer) {
+  if (!buyer || !Array.isArray(buyer.suppliers) || !buyer.suppliers.length) return new Set();
+  const supplierStirs = new Set(
+    buyer.suppliers
+      .map(s => String(s.stir || '').trim())
+      .filter(Boolean)
+  );
+  const supplierNames = new Set(
+    buyer.suppliers
+      .map(s => normalizeCompanyName(s.name || '').toLowerCase())
+      .filter(Boolean)
+  );
+  return new Set(
+    companies
+      .filter(c => {
+        const companyStir = String(c.stir || '').trim();
+        const companyName = normalizeCompanyName(c.name || '').toLowerCase();
+        return supplierStirs.has(companyStir) || supplierNames.has(companyName);
+      })
+      .map(c => c.id)
+  );
+}
 
 function pill(text, white) {
   return `<span class="pill${white ? ' pill-white' : ''}">${text}</span>`;
@@ -518,21 +531,25 @@ function satelliteProductCardHTML(c) {
 
 function buyerSupplierCardHTML(buyer, supplier, idx) {
   const colors = ['c1', 'c2', 'c3', 'c4'];
+  const supplierStir = supplier.stir || buyer.stir;
+  const addr = supplier.address || buyer.address || '';
+  const productsCount = Array.isArray(supplier.products) ? supplier.products.length : null;
+  const pillsHtml = [
+    supplierStir ? pill('STIR: ' + supplierStir) : '',
+    buyer.ifut ? pill('IFUT: ' + buyer.ifut) : '',
+    buyer.sector ? pill(buyer.sector) : '',
+  ].join('');
   return `<div class="partner-card buyer-supplier-card ${colors[idx % 4]}" data-supplier-id="${supplier.id}">
     <p class="pc-name">${normalizeCompanyName(supplier.name)}</p>
-    <div class="cc-pills">
-      ${pill('STIR: ' + buyer.stir)}
-      ${pill('IFUT: ' + (buyer.ifut || '35140'))}
-      ${pill(buyer.sector || 'Elektr energiya')}
-    </div>
-    <div>
+    ${pillsHtml ? `<div class="cc-pills">${pillsHtml}</div>` : ''}
+    ${addr ? `<div>
       <p class="cc-addr-label">Ishlab chiqarish maydonlari</p>
-      <p class="cc-addr">Navoiy viloyati, Uchquduq tumani, A.Navoiy ko‘chasi, 5A-uy</p>
-    </div>
-    <div>
+      <p class="cc-addr">${addr}</p>
+    </div>` : ''}
+    ${productsCount != null ? `<div>
       <p class="cc-addr-label">Mahsulotlar soni</p>
-      <p class="cc-addr">100</p>
-    </div>
+      <p class="cc-addr">${productsCount}</p>
+    </div>` : ''}
   </div>`;
 }
 
@@ -591,7 +608,7 @@ function renderHome() {
       ? list.map(companyCardHTML).join('')
       : list.map(x => `<div class="company-card company-card-static" data-buyer-id="${x.id}">
           <p class="cc-name">${normalizeCompanyName(x.name)}</p>
-          <div class="cc-pills">${pill('STIR: ' + x.stir)}</div>
+          ${x.stir ? `<div class="cc-pills">${pill('STIR: ' + x.stir)}</div>` : ''}
         </div>`).join(''))
     : '<p class="empty-state">Ma\'lumot topilmadi</p>';
 
@@ -617,10 +634,11 @@ function renderBuyer() {
   const buyer = state.buyer;
   if (!buyer) return;
   document.getElementById('bd-name').textContent = normalizeCompanyName(buyer.name);
-  document.getElementById('bd-pills').innerHTML =
-    pill('STIR: ' + buyer.stir, true) +
-    pill('IFUT: ' + (buyer.ifut || '35140'), true) +
-    pill(buyer.sector || 'Elektr energiya', true);
+  document.getElementById('bd-pills').innerHTML = [
+    buyer.stir ? pill('STIR: ' + buyer.stir, true) : '',
+    buyer.ifut ? pill('IFUT: ' + buyer.ifut, true) : '',
+    buyer.sector ? pill(buyer.sector, true) : '',
+  ].join('');
 
   const content = document.getElementById('buyer-content');
   const suppliers = (buyer.suppliers && buyer.suppliers.length) ? buyer.suppliers : [buyer];
@@ -641,15 +659,18 @@ function renderBuyerItem() {
   const supplier = state.buyerSupplier;
   if (!buyer || !supplier) return;
   document.getElementById('bi-name').textContent = normalizeCompanyName(supplier.name);
-  document.getElementById('bi-pills').innerHTML =
-    pill('STIR: ' + buyer.stir, true) +
-    pill('IFUT: ' + (buyer.ifut || '35140'), true) +
-    pill(buyer.sector || 'Elektr energiya', true);
-  document.getElementById('bi-addr').textContent = 'Navoiy viloyati, Uchquduq tumani, A.Navoiy ko‘chasi, 5A-uy';
+  document.getElementById('bi-pills').innerHTML = [
+    (supplier.stir || buyer.stir) ? pill('STIR: ' + (supplier.stir || buyer.stir), true) : '',
+    buyer.ifut ? pill('IFUT: ' + buyer.ifut, true) : '',
+    buyer.sector ? pill(buyer.sector, true) : '',
+  ].join('');
+  const addr = supplier.address || buyer.address || '';
+  document.getElementById('bi-addr').textContent = addr;
+  document.querySelector('#bi-header .cd-addr-block').style.display = addr ? '' : 'none';
 
-  const products = (supplier.products && supplier.products.length) ? supplier.products : buyerProducts;
+  const products = Array.isArray(supplier.products) ? supplier.products : [];
   const content = document.getElementById('buyer-products-content');
-  content.innerHTML = products.map(buyerProductCardHTML).join('');
+  content.innerHTML = products.length ? products.map(buyerProductCardHTML).join('') : '<p class="empty-state">Ma\'lumot topilmadi</p>';
   syncScrollIndicator(content);
 }
 
@@ -703,15 +724,25 @@ function renderInfo() {
 
 function updateBoothClasses() {
   const isCompanyView = state.view === 'company' && !!state.company;
+  const isBuyerView = (state.view === 'buyer' || state.view === 'buyer-item') && !!state.buyer;
   const isPartnersTab = isCompanyView && state.tab === 'xamkorlar';
   const isProposalsTab = isCompanyView && state.tab === 'takliflar';
   const partnerIds = isPartnersTab ? new Set(getPartners(state.company).map(p => p.id)) : null;
   const proposalIds = isProposalsTab ? new Set(getProposals(state.company).map(p => p.id)) : null;
+  const buyerSupplierIds = isBuyerView ? getBuyerSupplierCompanyIds(state.buyer) : null;
 
   document.querySelectorAll('.booth').forEach(el => {
     el.classList.remove('selected', 'partner', 'proposal', 'is-disabled');
 
     const id = el.dataset.id ? +el.dataset.id : null;
+    if (isBuyerView) {
+      if (id != null && buyerSupplierIds.has(id)) {
+        el.classList.add('partner');
+      } else {
+        el.classList.add('is-disabled');
+      }
+      return;
+    }
     if (!isCompanyView) return;
 
     if (id === state.company.id) {
@@ -741,7 +772,7 @@ function updateBoothClasses() {
   });
 
   const stageEl = document.querySelector('.map-stage');
-  if (stageEl) stageEl.classList.toggle('is-disabled', isCompanyView);
+  if (stageEl) stageEl.classList.toggle('is-disabled', isCompanyView || isBuyerView);
 }
 
 function clearPartnerLinks() {
