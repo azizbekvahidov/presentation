@@ -606,7 +606,7 @@ html, body {
   transition: background 0.1s;
   flex-shrink: 0;
 }
-.company-card.company-card-static { cursor: default; }
+.company-card.company-card-static { cursor: pointer; }
 .company-card:hover { background: rgba(255,255,255,1); }
 
 .cc-name {
@@ -883,12 +883,25 @@ html, body {
 .partner-card.c2 { border-left-color: var(--yellow); }
 .partner-card.c3 { border-left-color: var(--green); }
 .partner-card.c4 { border-left-color: var(--teal); }
+.buyer-supplier-card { cursor: pointer; }
 .pc-name {
   font-size: 14.714px;
   font-weight: 600;
   color: #0A0A0D;
   letter-spacing: -0.25px;
   line-height: 1.35;
+}
+
+.buyer-product-card {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid #c5ccd9;
+  border-radius: 18px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #15151A;
+  line-height: 1.35;
+  letter-spacing: -0.3px;
 }
 
 /* ─── INFO VIEW ───────────────────────────────────────── */

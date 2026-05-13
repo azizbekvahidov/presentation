@@ -2,6 +2,8 @@
 const state = {
   view: 'home',
   company: null,
+  buyer: null,
+  buyerSupplier: null,
   tab: 'xamkorlar',
   query: '',
   homeTab: 'buyurtmachilar',
@@ -12,13 +14,40 @@ const state = {
 
 const MAP_W = 3085;
 const MAP_H = 824;
+const buyerProducts = [
+  'Transformator',
+  'Isitish qozoni',
+  '"Gold Avex" ta 1 da devorga o‘rnatilgan elektr mini-isitgich',
+  'O‘chirgish bloki',
+  'Isitish qozoni',
+  'Transformator',
+  '"Gold Avex" ta 1 da devorga o‘rnatilgan elektr mini-isitgich',
+  'O‘chirgish bloki',
+  'Transformator',
+  '"Gold Avex" ta 1 da devorga o‘rnatilgan elektr mini-isitgich',
+  'O‘chirgish bloki',
+  'Transformator',
+];
 
 const buyurtmachilar = [
-  { id: 'b1', stir: '200144930', name: '"O‘zbekiston texnologik metallar kombinati" AJ' },
-  { id: 'b2', stir: '200144930', name: 'Geoburmash MCHJ' },
-  { id: 'b3', stir: '200144930', name: '"Grant metal stroy" MCHJ' },
-  { id: 'b4', stir: '200144930', name: '"Metal mahsulot zavodi" MCHJ' },
-  { id: 'b5', stir: '200144930', name: '"AUTO PAD SYSTEMS" MCHJ' },
+  {
+    id: 'b1',
+    stir: '200144930',
+    ifut: '35140',
+    sector: 'Elektr energiya',
+    name: '"O‘zbekiston texnologik metallar kombinati" AJ',
+    suppliers: [
+      { id: 's1', name: 'Navoiy KMK', products: buyerProducts },
+      { id: 's2', name: 'Geoburmash MCHJ', products: buyerProducts },
+      { id: 's3', name: '"Grant metal stroy" MCHJ', products: buyerProducts },
+      { id: 's4', name: '"Metal mahsulot zavodi" MCHJ', products: buyerProducts },
+      { id: 's5', name: '"AUTO PAD SYSTEMS" MCHJ', products: buyerProducts },
+    ],
+  },
+  { id: 'b2', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: 'Geoburmash MCHJ', suppliers: [] },
+  { id: 'b3', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: '"Grant metal stroy" MCHJ', suppliers: [] },
+  { id: 'b4', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: '"Metal mahsulot zavodi" MCHJ', suppliers: [] },
+  { id: 'b5', stir: '200144930', ifut: '35140', sector: 'Elektr energiya', name: '"AUTO PAD SYSTEMS" MCHJ', suppliers: [] },
 ];
 
 // ─── HE Ministry content ──────────────────────────────────
@@ -356,7 +385,7 @@ function buildMap() {
 // ─── Helpers ──────────────────────────────────────────────
 function push() {
   state.history.push({
-    view: state.view, company: state.company,
+    view: state.view, company: state.company, buyer: state.buyer, buyerSupplier: state.buyerSupplier,
     tab: state.tab, query: state.query, homeTab: state.homeTab, heTab: state.heTab,
   });
 }
@@ -487,6 +516,30 @@ function satelliteProductCardHTML(c) {
   </div>`;
 }
 
+function buyerSupplierCardHTML(buyer, supplier, idx) {
+  const colors = ['c1', 'c2', 'c3', 'c4'];
+  return `<div class="partner-card buyer-supplier-card ${colors[idx % 4]}" data-supplier-id="${supplier.id}">
+    <p class="pc-name">${normalizeCompanyName(supplier.name)}</p>
+    <div class="cc-pills">
+      ${pill('STIR: ' + buyer.stir)}
+      ${pill('IFUT: ' + (buyer.ifut || '35140'))}
+      ${pill(buyer.sector || 'Elektr energiya')}
+    </div>
+    <div>
+      <p class="cc-addr-label">Ishlab chiqarish maydonlari</p>
+      <p class="cc-addr">Navoiy viloyati, Uchquduq tumani, A.Navoiy ko‘chasi, 5A-uy</p>
+    </div>
+    <div>
+      <p class="cc-addr-label">Mahsulotlar soni</p>
+      <p class="cc-addr">100</p>
+    </div>
+  </div>`;
+}
+
+function buyerProductCardHTML(name) {
+  return `<div class="buyer-product-card">${name}</div>`;
+}
+
 // ─── Render ───────────────────────────────────────────────
 function render() {
   document.querySelectorAll('.panel-view').forEach(v => {
@@ -495,6 +548,8 @@ function render() {
   if (state.view !== 'home') hideSearchKeyboard();
 
   if (state.view === 'home')    renderHome();
+  if (state.view === 'buyer')   renderBuyer();
+  if (state.view === 'buyer-item') renderBuyerItem();
   if (state.view === 'company') renderCompany();
   if (state.view === 'info')    renderInfo();
   if (state.view === 'he')      renderHE();
@@ -534,7 +589,7 @@ function renderHome() {
   el.innerHTML = list.length
     ? (state.homeTab === 'korxonalar'
       ? list.map(companyCardHTML).join('')
-      : list.map(x => `<div class="company-card company-card-static">
+      : list.map(x => `<div class="company-card company-card-static" data-buyer-id="${x.id}">
           <p class="cc-name">${normalizeCompanyName(x.name)}</p>
           <div class="cc-pills">${pill('STIR: ' + x.stir)}</div>
         </div>`).join(''))
@@ -544,9 +599,58 @@ function renderHome() {
     el.querySelectorAll('.company-card').forEach(card => {
       card.addEventListener('click', () => { push(); selectCompany(+card.dataset.id); });
     });
+  } else {
+    el.querySelectorAll('[data-buyer-id]').forEach(card => {
+      card.addEventListener('click', () => {
+        const buyer = buyurtmachilar.find(x => x.id === card.dataset.buyerId);
+        if (!buyer) return;
+        push();
+        setState({ view: 'buyer', buyer });
+      });
+    });
   }
 
   syncScrollIndicator(el);
+}
+
+function renderBuyer() {
+  const buyer = state.buyer;
+  if (!buyer) return;
+  document.getElementById('bd-name').textContent = normalizeCompanyName(buyer.name);
+  document.getElementById('bd-pills').innerHTML =
+    pill('STIR: ' + buyer.stir, true) +
+    pill('IFUT: ' + (buyer.ifut || '35140'), true) +
+    pill(buyer.sector || 'Elektr energiya', true);
+
+  const content = document.getElementById('buyer-content');
+  const suppliers = (buyer.suppliers && buyer.suppliers.length) ? buyer.suppliers : [buyer];
+  content.innerHTML = suppliers.map((s, i) => buyerSupplierCardHTML(buyer, s, i)).join('');
+  content.querySelectorAll('[data-supplier-id]').forEach(card => {
+    card.addEventListener('click', () => {
+      const supplier = suppliers.find(s => s.id === card.dataset.supplierId);
+      if (!supplier) return;
+      push();
+      setState({ view: 'buyer-item', buyerSupplier: supplier });
+    });
+  });
+  syncScrollIndicator(content);
+}
+
+function renderBuyerItem() {
+  const buyer = state.buyer;
+  const supplier = state.buyerSupplier;
+  if (!buyer || !supplier) return;
+  document.getElementById('bi-name').textContent = normalizeCompanyName(supplier.name);
+  document.getElementById('bi-pills').innerHTML =
+    pill('STIR: ' + buyer.stir, true) +
+    pill('IFUT: ' + (buyer.ifut || '35140'), true) +
+    pill(buyer.sector || 'Elektr energiya', true);
+  document.getElementById('bi-addr').textContent = 'Navoiy viloyati, Uchquduq tumani, A.Navoiy ko‘chasi, 5A-uy';
+
+  const products = (supplier.products && supplier.products.length) ? supplier.products : buyerProducts;
+  const content = document.getElementById('buyer-products-content');
+  content.innerHTML = products.map(buyerProductCardHTML).join('');
+  syncScrollIndicator(content);
 }
 
 function renderCompany() {
@@ -712,6 +816,8 @@ function updateScrollThumb(el) {
 
 function getActiveScrollEl() {
   if (state.view === 'home')    return document.getElementById('home-list');
+  if (state.view === 'buyer')   return document.getElementById('buyer-content');
+  if (state.view === 'buyer-item') return document.getElementById('buyer-products-content');
   if (state.view === 'company') return document.getElementById('tab-content');
   if (state.view === 'info')    return document.getElementById('info-content');
   if (state.view === 'he')      return document.getElementById('he-content');
@@ -857,7 +963,7 @@ document.getElementById('btn-home').addEventListener('click', () => {
   state.history = [];
   document.getElementById('search-input').value = '';
   updateSearchClear();
-  setState({ view: 'home', company: null, tab: 'xamkorlar', query: '', homeTab: 'buyurtmachilar' });
+  setState({ view: 'home', company: null, buyer: null, buyerSupplier: null, tab: 'xamkorlar', query: '', homeTab: 'buyurtmachilar' });
 });
 
 document.getElementById('btn-back').addEventListener('click', () => {
@@ -870,7 +976,7 @@ document.getElementById('btn-back').addEventListener('click', () => {
     state.history = [];
     document.getElementById('search-input').value = '';
     updateSearchClear();
-    setState({ view: 'home', company: null, tab: 'xamkorlar', query: '', homeTab: 'buyurtmachilar' });
+    setState({ view: 'home', company: null, buyer: null, buyerSupplier: null, tab: 'xamkorlar', query: '', homeTab: 'buyurtmachilar' });
   }
 });
 
