@@ -1247,7 +1247,7 @@ const customers = [
     "inn": "308743271",
     "suppliers": [
       {
-        "name": "Geoburmash masuliyati cheklangan jamiyati",
+        "name": "ATMZ",
         "inn": "302776924",
         "products": [
           "Эрувчан сақлагич (Предохранитель)",
@@ -1316,7 +1316,7 @@ const customers = [
         ]
       },
       {
-        "name": "GLOBAL GEO METALL MCHJ",
+        "name": "LEGO GROUP",
         "inn": "303160314",
         "products": [
           "Рукава рез. напорно-всасывающие с текстильным каркасом Б-2-100-10",
@@ -1398,7 +1398,7 @@ const customers = [
     "inn": "300767864",
     "suppliers": [
       {
-        "name": "UZXCMG MCHJ",
+        "name": "STARTMIX",
         "inn": "302821203",
         "products": [
           "Перчатки"
@@ -2330,7 +2330,7 @@ const customers = [
         ]
       },
       {
-        "name": "GLOBAL GEO METALL MCHJ",
+        "name": "LEGO GROUP",
         "inn": "303160314",
         "products": [
           "МУФТА"
@@ -3913,7 +3913,7 @@ const customers = [
         ]
       },
       {
-        "name": "UZXCMG MCHJ",
+        "name": "STARTMIX",
         "inn": "302821203",
         "products": [
           "Блок управления",
@@ -4057,7 +4057,7 @@ const customers = [
         ]
       },
       {
-        "name": "Geoburmash masuliyati cheklangan jamiyati",
+        "name": "ATMZ",
         "inn": "302776924",
         "products": [
           "Трубка сифонная",
@@ -4434,7 +4434,7 @@ const customers = [
         ]
       },
       {
-        "name": "GLOBAL GEO METALL MCHJ",
+        "name": "LEGO GROUP",
         "inn": "303160314",
         "products": [
           "Провод эмалированный медный ПЭТВ-2 1,35"
@@ -5046,7 +5046,7 @@ const customers = [
         ]
       },
       {
-        "name": "UZXCMG MCHJ",
+        "name": "STARTMIX",
         "inn": "302821203",
         "products": [
           "Ремень клиновый"
@@ -5304,7 +5304,7 @@ const customers = [
     "inn": "200899410",
     "suppliers": [
       {
-        "name": "Geoburmash masuliyati cheklangan jamiyati",
+        "name": "ATMZ",
         "inn": "302776924",
         "products": [
           "Цеп приводная роликовые",
@@ -5350,7 +5350,7 @@ const customers = [
         ]
       },
       {
-        "name": "GLOBAL GEO METALL MCHJ",
+        "name": "LEGO GROUP",
         "inn": "303160314",
         "products": [
           "Масляный фильтр  OFS 110"
@@ -5717,7 +5717,7 @@ const customers = [
         ]
       },
       {
-        "name": "SOLID INDUSTRIES MAS'ULIYATI CHEKLANGAN JAMIYAT",
+        "name": "UZXCMG",
         "inn": "311040919",
         "products": [
           "ПРЕДОХРАНИТЕЛЬ ВЫСОКОВОЛЬТНЫЕ",
@@ -6071,7 +6071,7 @@ const customers = [
         ]
       },
       {
-        "name": "UZXCMG MCHJ",
+        "name": "STARTMIX",
         "inn": "302821203",
         "products": [
           "Обмоточный провод ПЭТ-155 1,00"
@@ -6257,7 +6257,7 @@ const customers = [
         ]
       },
       {
-        "name": "UZXCMG MCHJ",
+        "name": "STARTMIX",
         "inn": "302821203",
         "products": [
           "Насос",

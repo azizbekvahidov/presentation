@@ -172,7 +172,11 @@ const BOOTH_DEFS = [
   { x: 2905, y:  26, w: 147, h: 138, label: 'B2B zona' },
   { x: 2905, y: 195, w: 147, h: 147, label: 'Ilmiy ishlanmalar\nva Startaplar' },
   { x: 2909, y: 425, w: 143, h: 366, label: 'Coffee-break zona' },
-  { x: 2795, y: 447, w:  81, h: 234, label: 'Banklar' },
+  { x: 2795, y: 447, w:  81, h:  47, label: 'Turon bank', color: 'booth-orange' },
+  { x: 2795, y: 494, w:  81, h:  47, label: 'BRB bank', color: 'booth-orange' },
+  { x: 2795, y: 541, w:  81, h:  47, label: 'NBU', color: 'booth-orange' },
+  { x: 2795, y: 588, w:  81, h:  47, label: 'SQB bank', color: 'booth-orange' },
+  { x: 2795, y: 635, w:  81, h:  46, label: 'Asaka bank', color: 'booth-orange' },
 
   // ── Center group header booths ────────────────────────────────────
   { x:  636, y: 300, w: 166, h:  92, label: 'Navoiy', id: 93, zoneLabel: true },
@@ -191,7 +195,7 @@ const BOOTH_DEFS = [
   { x: 1285, y: 245, w:  62, h:  55, label: 'UTF', color: 'booth-purple' },
   { x: 1254, y: 337, w: 104, h:  59, label: '"GORTEHPROM"', id: 35 },
   { x: 1358, y: 337, w: 138, h:  59, label: '"SREDAZSVETME\nTENERGO"', id: 69 },
-  { x: 1496, y: 337, w:  95, h:  59, label: 'GEOBURMASH', id: 77 },
+  { x: 1496, y: 337, w:  95, h:  59, label: 'ATMZ', id: 77 },
   { x: 1654, y: 337, w:  62, h:  59, label: 'Navoiy\nDKTU', color: 'booth-purple' },
   { x: 1716, y: 337, w:  62, h:  59, label: 'MISIS', color: 'booth-purple' },
   { x: 1254, y: 425, w: 241, h:  59, label: '"CARBON-\nPOLYMER"', id: 11 },
@@ -244,14 +248,14 @@ const BOOTH_DEFS = [
   { x: 2353, y: 575, w:  96, h:  40, label: '"HYDRO\nCOMPONENT"', id: 42 },
   { x: 2081, y: 583, w:  90, h:  40, label: '"DIZEL DETAL\nSAVDO"', id: 39 },
   { x: 2172, y: 594, w:  90, h:  40, label: '"NAM MOTOR\nSERVIS"', id: 40 },
-  { x: 2265, y: 591, w:  80, h:  40, label: '"SOLID\nINDUSTRIES"', id: 41 },
+  { x: 2265, y: 591, w:  80, h:  40, label: '"UZXCMG"', id: 41 },
 
   // ── Top row booths (frame 232:3807, y=55, each 81×81) ────────────
   { x: 1895, y: 55, w: 81, h: 81, label: '"PROM TEX\nEKSPERTIZA"', id: 74 },
   { x: 1976, y: 55, w: 81, h: 81, label: '"NASIBA\nGAVHAR"', id: 14 },
   { x: 2057, y: 55, w: 81, h: 81, label: '"PISKENT\nHAMKOR SAVDO"', id: 13 },
   { x: 2138, y: 55, w: 81, h: 81, label: '"MYSTEP"', id: 58 },
-  { x: 2219, y: 55, w: 81, h: 81, label: 'Shturval' },
+  { x: 2219, y: 55, w: 81, h: 81, label: 'TEXNO TKAN TEKSTIL' },
   { x: 2300, y: 55, w: 81, h: 81, label: '"SALAMAN S\nROLIKS"', id: 59 },
   { x: 2381, y: 55, w: 81, h: 81, label: '"UZSHOES"\nMCHJ QK', id: 60 },
   { x: 2462, y: 55, w: 81, h: 81, label: '"BIG-PROM-\nSERVIS"', id: 30 },
@@ -266,9 +270,9 @@ const BOOTH_DEFS = [
   { x:  512, y: 703, w:  81, h: 81, label: '"FERRUM"', id: 12 },
   { x:  593, y: 703, w:  81, h: 81, label: '"SANOAT OGNEUPOR\nVA BUTLOV"', id: 15 },
   { x:  674, y: 703, w:  81, h: 81, label: '"OGNEUPOR"', id: 18 },
-  { x:  755, y: 703, w:  81, h: 81, label: '"APEX TOOLS"', id: 86 },
+  { x:  917, y: 703, w:  81, h: 81, label: '"APEX TOOLS"', id: 86 },
   { x:  836, y: 703, w:  81, h: 81, label: '"KOGON MARS\nPLUS"', id: 79 },
-  { x:  917, y: 703, w:  81, h: 81, label: '"KOGONTEKS"', id: 68 },
+  { x:  755, y: 703, w:  81, h: 81, label: '"KOGONTEKS"', id: 68 },
 
   // ── Bottom row 1 continued (frame 232:3830, y=703) ────────────────
   { x: 1020, y: 703, w:  63, h: 81, label: '"SDK GROUP\nAND"', id: 34 },
@@ -276,7 +280,7 @@ const BOOTH_DEFS = [
   { x: 1174, y: 703, w:  81, h: 41, label: '"NAMELEKTRO"', id: 16 },
   { x: 1174, y: 744, w:  81, h: 40, label: '"AFNAN\nBUILDING 2020"', id: 66 },
   { x: 1255, y: 703, w:  77, h: 81, label: '"STALMET GROUP\nSERVICE"', id: 32 },
-  { x: 1332, y: 703, w:  77, h: 81, label: '"UZXCMG"', id: 87 },
+  { x: 1332, y: 703, w:  77, h: 81, label: '"STARTMIX"', id: 87 },
   { x: 1409, y: 703, w: 131, h: 81, label: '"NAVOIYSKIY ZAVOD\nBUROVOY"', id: 72 },
   { x: 1540, y: 703, w:  77, h: 81, label: 'ELEMERT' },
 
@@ -288,7 +292,7 @@ const BOOTH_DEFS = [
   { x: 1964, y: 703, w: 81, h: 81, label: '"KATTAQO\'RG\'ON\nELEKTROTEXNIKA"', id: 63 },
   { x: 2045, y: 703, w: 81, h: 81, label: '"METALL REAL"', id: 67 },
   { x: 2126, y: 703, w: 81, h: 81, label: '"METALL-\nTECHNOLOGIES"', id: 73 },
-  { x: 2207, y: 703, w: 81, h: 81, label: '"SOLID\nINDUSTRIES"' },
+  { x: 2207, y: 703, w: 81, h: 81, label: '"UZXCMG"' },
 
   // ── Bottom row 3 (frame 232:3881, y=703) ──────────────────────────
   { x: 2309, y: 703, w: 81, h: 81, label: '"SURXON ART\nKERAMIKS"', id: 57 },
@@ -297,6 +301,7 @@ const BOOTH_DEFS = [
   { x: 2552, y: 703, w: 81, h: 81, label: '"BISYOR-FAYZ"', id: 64 },
   { x: 2633, y: 703, w: 81, h: 81, label: '"INOPROM"', id: 70 },
   { x: 2714, y: 703, w: 81, h: 81, label: '"CEMIX"', id: 81 },
+  { x: 2795, y: 703, w: 81, h: 81, label: '"TEXNOPARK"', id: 91 },
 ];
 
 // ─── jsPlumb instance (lazy) ──────────────────────────────

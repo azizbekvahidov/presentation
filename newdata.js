@@ -921,7 +921,7 @@ const companies = [
   {
     "id": 41,
     "stir": "311040919",
-    "name": "SOLID INDUSTRIES MCHJ",
+    "name": "UZXCMG",
     "viloyat": "Самарқанд вилояти",
     "tuman": "Нуробод тумани",
     "sector": "Тоғ-кон, геология, металургия саноати",
@@ -1722,7 +1722,7 @@ const companies = [
   {
     "id": 77,
     "stir": "302776924",
-    "name": "“GEOBURMASH” MCHJ",
+    "name": "ATMZ",
     "viloyat": "Тошкент шаҳри",
     "tuman": "Яшнобод тумани",
     "sector": "Sanoat",
@@ -1779,7 +1779,7 @@ const companies = [
   {
     "id": 80,
     "stir": "303160314",
-    "name": "GLOBAL GEO METALL MChJ",
+    "name": "LEGO GROUP",
     "viloyat": "Самарқанд вилояти",
     "tuman": "Қўшработ тумани",
     "sector": "Sanoat",
@@ -1918,7 +1918,7 @@ const companies = [
   {
     "id": 87,
     "stir": "302821203",
-    "name": "“UZXCMG” MCHJ QK",
+    "name": "STARTMIX",
     "viloyat": "Хоразм вилояти",
     "tuman": "Урганч шаҳри",
     "sector": "Sanoat",
